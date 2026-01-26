@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 
 # --- 設定區 ---
-SOURCE_DIR = "C:/Users/chihengting/Desktop/photo/照片"  # 例如 "C:/Photos/202401"
+SOURCE_DIR = ""  # 例如 "C:/Photos/202401"
 # 定義你的按鈕標籤與對應的目的地路徑
 TARGET_CONFIG = {
     "家人": "./Sorted/Family",
