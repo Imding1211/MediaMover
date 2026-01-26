@@ -55,12 +55,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-範例 `requirements.txt`：
-
-```txt
-streamlit
-```
-
 ---
 
 ## 🚀 啟動方式
@@ -68,10 +62,10 @@ streamlit
 在專案根目錄執行：
 
 ```bash
-streamlit run app.py
+streamlit run main.py
 ```
 
-> 請將 `app.py` 替換為實際的程式檔名
+> 請將 `main.py` 替換為實際的程式檔名
 
 瀏覽器將自動開啟：
 
@@ -88,7 +82,7 @@ http://localhost:8501
 請於程式碼中修改來源資料夾路徑：
 
 ```python
-SOURCE_DIR = "C:/Users/chihengting/Desktop/photo/照片"
+SOURCE_DIR = ""
 ```
 
 系統會遞迴掃描此資料夾下的所有圖片與影片檔案。
