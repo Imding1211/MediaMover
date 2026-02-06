@@ -1,17 +1,56 @@
 import streamlit as st
 import os
+import sys
 import shutil
+import json
 from pathlib import Path
+from dotenv import load_dotenv
+
+# 🔥 取得正確的執行路徑
+def get_base_path():
+    """取得程式的基礎路徑"""
+    if getattr(sys, 'frozen', False):
+        # 打包後的環境
+        return os.path.dirname(sys.executable)
+    else:
+        # 開發環境
+        return os.path.dirname(os.path.abspath(__file__))
+
+# 設定基礎路徑
+BASE_DIR = get_base_path()
+
+# 🔥 從正確的路徑載入 .env（指定編碼）
+env_path = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_path):
+    try:
+        # 先嘗試 UTF-8
+        load_dotenv(env_path, encoding='utf-8')
+    except UnicodeDecodeError:
+        try:
+            # 如果失敗，嘗試 UTF-8-sig（移除 BOM）
+            load_dotenv(env_path, encoding='utf-8-sig')
+        except UnicodeDecodeError:
+            try:
+                # 最後嘗試系統預設編碼（Windows 通常是 cp950 或 gbk）
+                load_dotenv(env_path, encoding='cp950')
+            except:
+                st.error(f"❌ 無法讀取 .env 檔案，請檢查編碼格式")
+else:
+    st.warning(f"⚠️ 找不到 .env 檔案於：{env_path}")
 
 # --- 設定區 ---
-SOURCE_DIR = ""  # 例如 "C:/Photos/202401"
-# 定義你的按鈕標籤與對應的目的地路徑
-TARGET_CONFIG = {
-    "家人": "./Sorted/Family",
-    "工作": "./Sorted/Work",
-    "風景": "./Sorted/Scenery",
-    "垃圾桶/刪除": "./Sorted/Trash"
-}
+SOURCE_DIR = os.getenv("SOURCE_DIR", "")
+TARGET_CONFIG_STR = os.getenv("TARGET_CONFIG", "")
+
+try:
+    TARGET_CONFIG = json.loads(TARGET_CONFIG_STR)
+except json.JSONDecodeError:
+    TARGET_CONFIG = {
+        "家人": "./Sorted/Family",
+        "工作": "./Sorted/Work",
+        "風景": "./Sorted/Scenery",
+        "垃圾桶/刪除": "./Sorted/Trash"
+    }
 
 # 支援的檔案格式
 IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']
@@ -24,6 +63,7 @@ def get_all_files(source):
             if Path(file).suffix.lower() in IMAGE_EXTS + VIDEO_EXTS:
                 file_list.append(os.path.join(root, file))
     return file_list
+
 
 # --- Streamlit 介面 ---
 st.set_page_config(page_title="照片快速分類器", layout="wide")
